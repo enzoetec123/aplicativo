@@ -21,17 +21,24 @@ jobs:
       with:
         java-version: '11'
 
-    - name: Download Android SDK
-      uses: android-actions/setup-android@v2
-      with:
-        api-level: 30
-        target: default
-        arch: x86_64
-        profile: default
-        ndk: '21.3.6528147'
+    - name: Download and set up Android SDK
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y openjdk-11-jdk
+        wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+        mkdir -p $HOME/android-sdk
+        unzip commandlinetools-linux-8512546_latest.zip -d $HOME/android-sdk/cmdline-tools
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
+      env:
+        ANDROID_SDK_ROOT: $HOME/android-sdk
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
+      env:
+        JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+        ANDROID_HOME: $HOME/android-sdk
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
