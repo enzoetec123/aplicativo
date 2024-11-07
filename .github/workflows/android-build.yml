@@ -22,6 +22,7 @@ jobs:
       uses: actions/setup-java@v2  # Atualizado para a versão mais recente
       with:
         java-version: '11'
+        distribution: 'AdoptOpenJDK'  # Ou outra distribuição, conforme necessário
 
     # Passo 3: Baixar e configurar o Android SDK
     - name: Download and set up Android SDK
