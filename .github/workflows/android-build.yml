@@ -13,14 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Passo 1: Verificar o código
     - name: Check out the code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Atualizado para a versão mais recente
 
+    # Passo 2: Configurar JDK
     - name: Set up JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2  # Atualizado para a versão mais recente
       with:
         java-version: '11'
 
+    # Passo 3: Baixar e configurar o Android SDK
     - name: Download and set up Android SDK
       run: |
         sudo apt-get update -y
@@ -34,12 +37,18 @@ jobs:
       env:
         ANDROID_SDK_ROOT: $HOME/android-sdk
 
+    # Passo 4: Conceder permissão de execução ao gradlew
+    - name: Grant execute permission to gradlew
+      run: chmod +x gradlew
+
+    # Passo 5: Construir com o Gradle
     - name: Build with Gradle
       run: ./gradlew assembleDebug
       env:
         JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
         ANDROID_HOME: $HOME/android-sdk
 
+    # Passo 6: Fazer o upload do APK gerado
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
